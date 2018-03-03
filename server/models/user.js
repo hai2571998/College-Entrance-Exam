@@ -33,6 +33,11 @@ const UserSchema = mongoose.Schema({
   comfirmed: {
     type: Boolean,
     default: false
+  },
+  temporarytoken: {
+    type: String,
+    require: true,
+
   }
 });
 
