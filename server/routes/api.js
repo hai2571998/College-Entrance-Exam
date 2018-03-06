@@ -145,6 +145,38 @@ router.get('/profile', passport.authenticate('jwt', {
   });
 });
 
+router.put('/update/:id', (req, res) => {
+  var id = req.params.id;
+  User.findOne({
+    _id: id
+  }, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send();
+    } else {
+      if (!user) {
+        res.status(404).send();
+      } else {
+        if (req.body.name) {
+          user.name = req.body.name;
+        }
+        if (req.body.email) {
+          user.email = req.body.email;
+        }
+
+        user.save((err, updateUser) => {
+          if(err){
+            console.log(err);
+            res.status(500).send();
+          } else {
+            res.send(updateUser);
+          }
+        });
+      }
+    }
+  });
+});
+
 router.get('/activate/:token', (req, res) => {
   User.findOne({
     temporarytoken: req.params.token
@@ -174,8 +206,8 @@ router.get('/activate/:token', (req, res) => {
               from: 'ThanhHaiDev@gmail.com',
               to: user.email,
               subject: 'Loclhost Activation Link',
-              text: 'Hello world',
-              html: '<b>' + user.username + '</b>' + '<br>Link: <a href="http://localhost:3000/activate/' + user.temporarytoken + '"><a href="http://localhost:3000/activate</a>'
+              text: 'Active Success',
+              html: '<b>' + user.username + '</b>' + '<br>Link: <a href="http://localhost:3000/api/activate/' + user.temporarytoken + '">http://localhost:3000/api/activate</a>'
             };
 
             client.sendMail(email, function (err, info) {
